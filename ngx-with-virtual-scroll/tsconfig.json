@@ -19,12 +19,7 @@
         "lib": [
             "es2018",
             "dom"
-        ],
-        "paths": {
-            "ngx-virtual-scroll-kit": [
-                "dist/ngx-virtual-scroll-kit"
-            ]
-        }
+        ]
     },
     "angularCompilerOptions": {
         "enableI18nLegacyMessageIdFormat": false,

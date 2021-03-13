@@ -2,17 +2,17 @@ import { Directive, ElementRef, Input } from '@angular/core';
 import { VirtualItem } from './types';
 
 @Directive({
-    selector: '[with-unequal-size]',
+    selector: '[measure-size-for]',
 })
-export class WithUnequalSizeDirective {
+export class MeasureSizeForDirective {
     /**
      * virtual item connect to
      */
-    @Input('with-unequal-size') item?: VirtualItem;
+    @Input('measure-size-for') item?: VirtualItem;
 
     constructor(private elementRef: ElementRef) {}
 
     ngAfterViewChecked() {
-        this.item?.recalcSize(this.elementRef.nativeElement);
+        this.item?.measureSize(this.elementRef.nativeElement);
     }
 }

@@ -18,7 +18,7 @@ export interface VirtualMeasurement {
 }
 
 export interface VirtualItem extends VirtualMeasurement {
-    recalcSize: VirtualRecalcSizeFn;
+    measureSize: VirtualMeasureElementSizeFn;
 }
 
 export interface VirtualBoundaries {
@@ -28,8 +28,13 @@ export interface VirtualBoundaries {
 
 export type VirtualEstimateSizeFn = (index: number) => number;
 export type VirtualScrollToFn = (offset: number) => void;
-export type VirtualRecalcSizeFn = (el: HTMLElement) => void;
-export type VirtualRecalcSizeFnFactory = (item: VirtualItem) => (el: HTMLElement) => void;
+export type VirtualCustomScrollToFn = (offset: number, defaultScrollToFn: VirtualScrollToFn) => void;
+export type VirtualMeasureElementSizeFn = (el: HTMLElement) => void;
+export type VirtualMeasureItemSizeFn = (item: VirtualItem) => VirtualMeasureElementSizeFn;
+export type VirtualMeasureSizeFnFactory = (
+    defaultScrollFn: VirtualScrollToFn,
+    keys: VirtualKeys,
+) => VirtualMeasureItemSizeFn;
 
 export interface VirtualKeys {
     sizeKey: string;
@@ -38,3 +43,10 @@ export interface VirtualKeys {
 }
 
 export type VirtualMeasuredCache = Record<string, number>;
+
+export enum VirtualScrollToAlign {
+    Auto = 'auto',
+    Start = 'start',
+    Center = 'center',
+    End = 'end',
+}

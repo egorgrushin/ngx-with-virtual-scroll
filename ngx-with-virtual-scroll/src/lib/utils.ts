@@ -1,16 +1,19 @@
 import {
-    VirtualBoundaries,
+    VirtualBoundaries, VirtualScrollToFn,
     VirtualEstimateSizeFn,
     VirtualItem,
     VirtualKeys,
     VirtualMeasuredCache,
+    VirtualMeasureItemSizeFn,
     VirtualMeasurement,
-    VirtualRecalcSizeFnFactory,
-    VirtualScrollToFn,
+    VirtualMeasureSizeFnFactory,
+    VirtualCustomScrollToFn,
 } from './types';
 import { defaultEstimateSizeFn } from './constants';
-import { BehaviorSubject } from 'rxjs';
 import memoizeOne from 'memoize-one';
+import observeRect from '@reach/observe-rect';
+import { map, startWith, switchMap } from 'rxjs/operators';
+import { fromEvent, Observable } from 'rxjs';
 
 export const buildKeys = memoizeOne((horizontal: boolean): VirtualKeys => ({
     sizeKey: horizontal ? 'width' : 'height',
@@ -18,14 +21,26 @@ export const buildKeys = memoizeOne((horizontal: boolean): VirtualKeys => ({
     positionKey: horizontal ? 'left' : 'top',
 }));
 
+export const buildTotalSize = (
+    measurements: VirtualMeasurement[],
+) => measurements[measurements.length - 1]?.end || 0;
+
 export const buildMeasurements = memoizeOne((
     count: number = 0,
-    estimateSizeFn: VirtualEstimateSizeFn = defaultEstimateSizeFn,
     measuredCache: VirtualMeasuredCache,
+    useFirstMeasuredSize: boolean,
+    estimateSizeFn: VirtualEstimateSizeFn = defaultEstimateSizeFn,
 ): VirtualMeasurement[] => {
     const measurements: VirtualMeasurement[] = [];
+    let forcedSize;
+    if (useFirstMeasuredSize) {
+        const sizes = Object.values(measuredCache);
+        if (sizes.length > 0) {
+            forcedSize = sizes[0];
+        }
+    }
     for (let i = 0; i < count; i++) {
-        const measuredSize = measuredCache[i];
+        const measuredSize = forcedSize ?? measuredCache[i];
         const start = measurements[i - 1] ? measurements[i - 1].end : 0;
         const size = typeof measuredSize === 'number' ? measuredSize : estimateSizeFn(i);
         const end = start + size;
@@ -34,10 +49,16 @@ export const buildMeasurements = memoizeOne((
     return measurements;
 });
 
+export const buildMeasureItemSizeFactory = memoizeOne((
+    keys: VirtualKeys,
+    defaultToScroll: VirtualScrollToFn,
+    measureSizeFactory: VirtualMeasureSizeFnFactory,
+): VirtualMeasureItemSizeFn => measureSizeFactory(defaultToScroll, keys));
+
 export const buildVirtualItems = memoizeOne((
     range: VirtualBoundaries,
     measurements: VirtualMeasurement[],
-    recalcSizeFactory: VirtualRecalcSizeFnFactory,
+    measureItemSizeFactory: VirtualMeasureItemSizeFn,
 ): VirtualItem[] => {
     const virtualItems: VirtualItem[] = [];
     const end = Math.min(range.end, measurements.length - 1);
@@ -47,12 +68,11 @@ export const buildVirtualItems = memoizeOne((
 
         const item: VirtualItem = {
             ...measurement,
-            recalcSize: (el) => recalcSizeFactory(item)(el),
+            measureSize: (el) => measureItemSizeFactory(item)(el),
         };
 
         virtualItems.push(item);
     }
-
     return virtualItems;
 });
 
@@ -60,13 +80,12 @@ export const buildVirtualItems = memoizeOne((
  * it builds boundaries in pixels
  */
 export const buildFrame = memoizeOne((
-    viewportRef: HTMLElement,
+    viewportRect: DOMRect,
     keys: VirtualKeys,
     scrollOffset: number,
     totalSize: number,
     containerRef?: HTMLElement,
 ): VirtualBoundaries => {
-    const viewportRect = viewportRef.getBoundingClientRect();
     // @ts-ignore
     const viewportOuterSize: number = viewportRect[keys.sizeKey];
     // @ts-ignore
@@ -125,25 +144,28 @@ export const buildRange = memoizeOne((
     return { start, end };
 });
 
-export const buildRecalcSizeFnFactoryForItem = memoizeOne((
-    keys: VirtualKeys,
-    defaultScrollToFn: VirtualScrollToFn,
-    scrollOffset: number,
-    measuredCache$: BehaviorSubject<VirtualMeasuredCache>,
-): VirtualRecalcSizeFnFactory => (item: VirtualItem) => (el: HTMLElement) => {
-    if (!el) return;
-    // @ts-ignore
-    const { [keys.sizeKey]: measuredSize } = el.getBoundingClientRect();
-    if (measuredSize !== item.size) {
-        if (item.start < scrollOffset) {
-            defaultScrollToFn(scrollOffset + (measuredSize - item.size));
-        }
-        const old = measuredCache$.getValue();
-        measuredCache$.next({ ...old, [item.index]: measuredSize });
-    }
-});
-
 export const isBoundariesEqual = (
     boundary1: VirtualBoundaries | undefined,
     boundary2: VirtualBoundaries,
-): boolean => boundary1?.start === boundary2.start && boundary1.end !== boundary2.end;
+): boolean => boundary1?.start === boundary2.start && boundary1.end === boundary2.end;
+
+export const buildResolvedScrollToFn = memoizeOne((
+    defaultScrollToFn: VirtualScrollToFn,
+    scrollToFn?: VirtualCustomScrollToFn,
+): VirtualScrollToFn => {
+    const resolvedScrollToFn = scrollToFn ?? defaultScrollToFn;
+    return (offset: number) => resolvedScrollToFn(offset, defaultScrollToFn);
+});
+
+
+export const buildElementRectObserver$ = (
+    elementRef$: Observable<HTMLElement>,
+): Observable<DOMRect> => elementRef$.pipe(
+    switchMap((elementRef) => new Observable<DOMRect>((observer) => {
+        const rectObserver = observeRect(elementRef, (rect) => observer.next(rect));
+        rectObserver.observe();
+        return () => rectObserver.unobserve();
+    }).pipe(
+        startWith(elementRef.getBoundingClientRect()),
+    )),
+);
