@@ -10,7 +10,7 @@ Heavily inspired by [react-virtual](https://github.com/tannerlinsley/react-virtu
 ## Features
 
 - It doesn't provide any component to wrap your lists, so you can create your own markup and styling
-- You can pass any scroll element to be scrolled, even if it's not ancestor of your container (see examples)
+- You can pass any scroll element to be scrolled, even if it's not ancestor of your container (see [examples](https://github.com/egorgrushin/ngx-with-virtual-scroll/tree/master/README.md#examples))
 - It can render both static, dynamic and different size elements
 - It provides scrollTo and scrollToIndex functions
 - It allows you to override scrolling function that is using in previous pt.
