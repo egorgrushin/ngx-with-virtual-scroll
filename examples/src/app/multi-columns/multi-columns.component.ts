@@ -12,6 +12,8 @@ import { defaultEstimateSize } from '../constants';
 export class MultiColumnsComponent {
     rows = generateItems(100000, 'row');
 
+    columns = generateItems(50, 'column');
+
     estimateSizeFn = defaultEstimateSize;
 
     trackByRows() {

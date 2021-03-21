@@ -6,20 +6,25 @@
               [viewportRef]="viewportRef"
               #scroll="with-virtual-scroll">
     <div class="columns" #viewportRef>
-        <div [style.height.px]="scroll.totalSize" class="column">
+        <div [style.height.px]="scroll.totalSize" class="column column--fixed">
             <div *ngFor="let item of scroll.virtualItems; trackBy: trackByRows()"
                  [style.transform]="'translateY(' + item.start + 'px)'"
                  [style.height.px]="rows[item.index].size"
-                 class="item item--vertical">
-                First column: {{rows[item.index].name}}
+                 class="row">
+                <div class="cell cell--fixed">
+                    Fixed: {{rows[item.index].name}}
+                </div>
             </div>
         </div>
         <div [style.height.px]="scroll.totalSize" class="column">
             <div *ngFor="let item of scroll.virtualItems; trackBy: trackByRows()"
                  [style.transform]="'translateY(' + item.start + 'px)'"
                  [style.height.px]="rows[item.index].size"
-                 class="item item--vertical">
-                Second column: {{rows[item.index].name}}
+                 class="row">
+                <div *ngFor="let column of columns"
+                     class="cell">
+                    {{column.name}} {{rows[item.index].name}}
+                </div>
             </div>
         </div>
     </div>
