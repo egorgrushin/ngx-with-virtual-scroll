@@ -1,11 +1,11 @@
-import { SIZE } from './constants';
+import { defaultEstimateSize } from './constants';
 
 export const generateItems = (
     count: number,
     label: string,
-    size: number = SIZE,
+    sizeFn: () => number = defaultEstimateSize,
 ) => [...Array(count)].map((i, index) => ({
     id: index,
     name: `${label} ${index}`,
-    size,
+    size: sizeFn(),
 }));
