@@ -16,11 +16,11 @@ Heavily inspired by [react-virtual](https://github.com/tannerlinsley/react-virtu
 
 ## Examples
 
-- The most minimal use case [Source](https://github.com/egorgrushin/ngx-with-virtual-scroll/tree/master/examples/minimal) | [Live](https://codesandbox.io/s/github/egorgrushin/ngx-with-virtual-scroll/tree/master/examples?initialpath=/minimal)
+- The most minimal use case [Source](https://github.com/egorgrushin/ngx-with-virtual-scroll/tree/master/examples/src/app/minimal) | [Live](https://codesandbox.io/s/github/egorgrushin/ngx-with-virtual-scroll/tree/master/examples?initialpath=/minimal&file=/src/app/minimal/minimal.component.html)
 
-- Pre and post blocks with any nested level. It can be helpful if your viewport and container are not in direct inheritance [Source](https://github.com/egorgrushin/ngx-with-virtual-scroll/tree/master/examples/blocks) | [Live](https://codesandbox.io/s/github/egorgrushin/ngx-with-virtual-scroll/tree/master/examples?initialpath=/blocks)
+- Pre and post blocks with any nested level. It can be helpful if your viewport and container are not in direct inheritance [Source](https://github.com/egorgrushin/ngx-with-virtual-scroll/tree/master/examples/src/app/blocks) | [Live](https://codesandbox.io/s/github/egorgrushin/ngx-with-virtual-scroll/tree/master/examples?initialpath=/blocks&file=/src/app/blocks/blocks.component.html)
 
-- Using one viewport to render several independent virtual scrolls [Source](https://github.com/egorgrushin/ngx-with-virtual-scroll/tree/master/examples/one-viewport-several-scrolls) | [Live](https://codesandbox.io/s/github/egorgrushin/ngx-with-virtual-scroll/tree/master/examples?initialpath=/one-viewport-several-scrolls)
+- Using one viewport to render several independent virtual scrolls [Source](https://github.com/egorgrushin/ngx-with-virtual-scroll/tree/readme/examples/src/app/one-viewport-several-scrolls) | [Live](https://codesandbox.io/s/github/egorgrushin/ngx-with-virtual-scroll/tree/master/examples?initialpath=/one-viewport-several-scrolls&file=/src/app/one-viewport-several-scrolls/one-viewport-several-scrolls.component.html)
 
   
 
