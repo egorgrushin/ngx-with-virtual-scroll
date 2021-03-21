@@ -1,12 +1,12 @@
 <h1>Minimal usage:</h1>
 
 <h2>Vertical</h2>
-<div class="viewport" #verticalViewportRef>
-    <ng-container with-virtual-scroll
-                  [count]="rows.length"
-                  [estimateSize]="estimateSizeFn"
-                  [viewportRef]="verticalViewportRef"
-                  #verticalScroll="with-virtual-scroll">
+<ng-container with-virtual-scroll
+              [count]="rows.length"
+              [estimateSize]="estimateSizeFn"
+              [viewportRef]="verticalViewportRef"
+              #verticalScroll="with-virtual-scroll">
+    <div class="viewport" #verticalViewportRef>
         <div [style.height.px]="verticalScroll.totalSize" class="container">
             <div *ngFor="let item of verticalScroll.virtualItems; trackBy: trackByRows()"
                  [style.transform]="'translateY(' + item.start + 'px)'"
@@ -15,18 +15,18 @@
                 {{rows[item.index].name}}
             </div>
         </div>
-    </ng-container>
-</div>
+    </div>
+</ng-container>
 
 
 <h2>Horizontal</h2>
-<div class="viewport" #horizontalViewportRef>
-    <ng-container with-virtual-scroll
-                  [count]="rows.length"
-                  [horizontal]="true"
-                  [estimateSize]="estimateSizeFn"
-                  [viewportRef]="horizontalViewportRef"
-                  #horizontalScroll="with-virtual-scroll">
+<ng-container with-virtual-scroll
+              [count]="rows.length"
+              [horizontal]="true"
+              [estimateSize]="estimateSizeFn"
+              [viewportRef]="horizontalViewportRef"
+              #horizontalScroll="with-virtual-scroll">
+    <div class="viewport" #horizontalViewportRef>
         <div [style.width.px]="horizontalScroll.totalSize" class="container">
             <div *ngFor="let item of horizontalScroll.virtualItems; trackBy: trackByRows()"
                  [style.transform]="'translateX(' + item.start + 'px)'"
@@ -35,25 +35,25 @@
                 {{rows[item.index].name}}
             </div>
         </div>
-    </ng-container>
-</div>
+    </div>
+
+</ng-container>
 
 
 <h2>Grid</h2>
 
-
-<div class="viewport" #gridViewportRef>
+<ng-container with-virtual-scroll
+              [count]="rows.length"
+              [estimateSize]="estimateSizeFn"
+              [viewportRef]="gridViewportRef"
+              #rowScroll="with-virtual-scroll">
     <ng-container with-virtual-scroll
-                  [count]="rows.length"
+                  [count]="columns.length"
+                  [horizontal]="true"
                   [estimateSize]="estimateSizeFn"
                   [viewportRef]="gridViewportRef"
-                  #rowScroll="with-virtual-scroll">
-        <ng-container with-virtual-scroll
-                      [count]="columns.length"
-                      [horizontal]="true"
-                      [estimateSize]="estimateSizeFn"
-                      [viewportRef]="gridViewportRef"
-                      #columnScroll="with-virtual-scroll">
+                  #columnScroll="with-virtual-scroll">
+        <div class="viewport" #gridViewportRef>
             <div [style.height.px]="rowScroll.totalSize"
                  [style.width.px]="columnScroll.totalSize"
                  class="container">
@@ -68,6 +68,6 @@
                     </ng-container>
                 </ng-container>
             </div>
-        </ng-container>
+        </div>
     </ng-container>
-</div>
+</ng-container>
