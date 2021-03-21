@@ -1,0 +1,27 @@
+<h1>Scroll</h1>
+
+<div class="form">
+    <input type="number" #offsetInput class="form__input">
+    <button (click)="scroll.scrollToOffset(+offsetInput.value)">Scroll to offset!</button>
+</div>
+<div class="form">
+    <input type="number" #indexInput class="form__input">
+    <button (click)="scroll.scrollToIndex(+indexInput.value)">Scroll to index!</button>
+</div>
+
+<ng-container with-virtual-scroll
+              [count]="rows.length"
+              [viewportRef]="verticalViewportRef"
+              [scrollToFn]="scrollToFn"
+              #scroll="with-virtual-scroll">
+    <div class="viewport" #verticalViewportRef>
+        <div [style.height.px]="scroll.totalSize" class="container">
+            <div *ngFor="let item of scroll.virtualItems; trackBy: trackByRows()"
+                 [style.transform]="'translateY(' + item.start + 'px)'"
+                 [measure-size-for]="item"
+                 class="item item--vertical">
+                {{rows[item.index].name}}
+            </div>
+        </div>
+    </div>
+</ng-container>

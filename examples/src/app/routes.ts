@@ -4,6 +4,7 @@ import { BlocksComponent } from './blocks/blocks.component';
 import { OneViewportSeveralScrollsComponent } from './one-viewport-several-scrolls/one-viewport-several-scrolls.component';
 import { MultiColumnsComponent } from './multi-columns/multi-columns.component';
 import { SizesComponent } from './sizes/sizes.component';
+import { ScrollComponent } from './scroll/scroll.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/minimal', pathMatch: 'full' },
@@ -12,4 +13,5 @@ export const routes: Routes = [
     { path: 'one-viewport-several-scrolls', component: OneViewportSeveralScrollsComponent },
     { path: 'multi-columns', component: MultiColumnsComponent },
     { path: 'sizes', component: SizesComponent },
+    { path: 'scroll', component: ScrollComponent },
 ];

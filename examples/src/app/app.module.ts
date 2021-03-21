@@ -10,6 +10,7 @@ import { BlocksComponent } from './blocks/blocks.component';
 import { OneViewportSeveralScrollsComponent } from './one-viewport-several-scrolls/one-viewport-several-scrolls.component';
 import { MultiColumnsComponent } from './multi-columns/multi-columns.component';
 import { SizesComponent } from './sizes/sizes.component';
+import { ScrollComponent } from './scroll/scroll.component';
 
 @NgModule({
     declarations: [
@@ -19,6 +20,7 @@ import { SizesComponent } from './sizes/sizes.component';
         OneViewportSeveralScrollsComponent,
         MultiColumnsComponent,
         SizesComponent,
+        ScrollComponent,
     ],
     imports: [
         BrowserModule,
