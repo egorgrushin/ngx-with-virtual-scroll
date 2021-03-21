@@ -1,0 +1,40 @@
+.viewport {
+    border: 1px solid black;
+    background: #CC6600;
+    max-height: 600px;
+    width: 600px;
+    overflow: auto;
+
+    &--horizontal {
+        height: 600px;
+        max-width: 600px;
+    }
+
+    &--grid {
+        width: 600px;
+        height: 600px;
+    }
+}
+
+.container {
+    background: #fff;
+    height: 100%;
+    position: relative;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #7cce79;
+    border: 1px solid black;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+
+    &--horizontal {
+        height: 100%;
+        width: auto;
+    }
+}

@@ -3,16 +3,19 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 import { NgxWithVirtualScrollModule } from 'ngx-with-virtual-scroll';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MinimalComponent } from './minimal/minimal.component';
+import { RouterModule } from '@angular/router';
+import { routes } from './routes';
 
 @NgModule({
     declarations: [
         AppComponent,
+        MinimalComponent,
     ],
     imports: [
         BrowserModule,
-        BrowserAnimationsModule,
         NgxWithVirtualScrollModule,
+        RouterModule.forRoot(routes),
     ],
     providers: [],
     bootstrap: [AppComponent],
