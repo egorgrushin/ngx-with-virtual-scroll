@@ -1,5 +1,6 @@
 import {
-    VirtualBoundaries, VirtualScrollToFn,
+    VirtualBoundaries,
+    VirtualCustomScrollToFn,
     VirtualEstimateSizeFn,
     VirtualItem,
     VirtualKeys,
@@ -7,13 +8,13 @@ import {
     VirtualMeasureItemSizeFn,
     VirtualMeasurement,
     VirtualMeasureSizeFnFactory,
-    VirtualCustomScrollToFn,
+    VirtualScrollToFn,
 } from './types';
 import { defaultEstimateSizeFn } from './constants';
 import memoizeOne from 'memoize-one';
 import observeRect from '@reach/observe-rect';
-import { map, startWith, switchMap } from 'rxjs/operators';
-import { fromEvent, Observable } from 'rxjs';
+import { startWith, switchMap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 export const buildKeys = memoizeOne((horizontal: boolean): VirtualKeys => ({
     sizeKey: horizontal ? 'width' : 'height',
@@ -150,13 +151,13 @@ export const isBoundariesEqual = (
 ): boolean => boundary1?.start === boundary2.start && boundary1.end === boundary2.end;
 
 export const buildResolvedScrollToFn = memoizeOne((
+    viewportRef: HTMLElement,
     defaultScrollToFn: VirtualScrollToFn,
     scrollToFn?: VirtualCustomScrollToFn,
 ): VirtualScrollToFn => {
     const resolvedScrollToFn = scrollToFn ?? defaultScrollToFn;
-    return (offset: number) => resolvedScrollToFn(offset, defaultScrollToFn);
+    return (offset: number) => resolvedScrollToFn(offset, viewportRef, defaultScrollToFn);
 });
-
 
 export const buildElementRectObserver$ = (
     elementRef$: Observable<HTMLElement>,

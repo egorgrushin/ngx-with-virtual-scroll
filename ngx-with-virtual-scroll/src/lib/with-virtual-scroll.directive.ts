@@ -199,7 +199,7 @@ export class WithVirtualScrollDirective {
             this.range = range;
         }
         const defaultScrollToFn = buildDefaultScrollToFn(this.viewportRef, this.keys);
-        this.resolvedScrollToFn = buildResolvedScrollToFn(defaultScrollToFn, this.scrollToFn);
+        this.resolvedScrollToFn = buildResolvedScrollToFn(this.viewportRef, defaultScrollToFn, this.scrollToFn);
 
         const measureItemSizeFactory = buildMeasureItemSizeFactory(
             this.keys,

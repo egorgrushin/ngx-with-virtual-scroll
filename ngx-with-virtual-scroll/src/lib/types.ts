@@ -28,7 +28,11 @@ export interface VirtualBoundaries {
 
 export type VirtualEstimateSizeFn = (index: number) => number;
 export type VirtualScrollToFn = (offset: number) => void;
-export type VirtualCustomScrollToFn = (offset: number, defaultScrollToFn: VirtualScrollToFn) => void;
+export type VirtualCustomScrollToFn = (
+    offset: number,
+    viewportRef: HTMLElement,
+    defaultScrollToFn: VirtualScrollToFn,
+) => void;
 export type VirtualMeasureElementSizeFn = (el: HTMLElement) => void;
 export type VirtualMeasureItemSizeFn = (item: VirtualItem) => VirtualMeasureElementSizeFn;
 export type VirtualMeasureSizeFnFactory = (
