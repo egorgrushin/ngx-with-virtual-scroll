@@ -1,5 +1,7 @@
 # ngx-with-virtual-scroll
 
+[<img src="https://img.shields.io/badge/npm-1.0.0-brightgreen">](https://www.npmjs.com/package/ngx-with-virtual-scroll)
+
 The kit to create virtual scrolling lists, tables, grids etc. **Zero styling, non-component**. It allows you to render huge amount of items with high performance by rendering only items within viewport. Other items will be rendered dynamicly   during the scroll. 
 
 Heavily inspired by [react-virtual](https://github.com/tannerlinsley/react-virtual)
