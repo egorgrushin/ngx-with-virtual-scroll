@@ -1,0 +1,26 @@
+<h1>Blocks:</h1>
+
+<div class="viewport" #viewportRef>
+    <ng-container with-virtual-scroll
+                  [count]="rows.length"
+                  [estimateSize]="estimateSizeFn"
+                  [viewportRef]="viewportRef"
+                  [containerRef]="containerRef"
+                  #scroll="with-virtual-scroll">
+        <div class="block"></div>
+        <div>
+            <div class="block block--inside"></div>
+            <div [style.height.px]="scroll.totalSize" #containerRef class="container">
+                <ng-container *ngFor="let item of scroll.virtualItems; trackBy: trackByRows()">
+                    <div [style.transform]="'translateY(' + item.start + 'px)'"
+                         [style.height.px]="rows[item.index].size"
+                         class="item item--vertical">
+                        {{rows[item.index].name}}
+                    </div>
+                </ng-container>
+            </div>
+            <div class="block block--inside"></div>
+        </div>
+        <div class="block"></div>
+    </ng-container>
+</div>

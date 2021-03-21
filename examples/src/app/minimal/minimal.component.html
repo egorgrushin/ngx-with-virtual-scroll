@@ -11,7 +11,7 @@
             <ng-container *ngFor="let item of verticalScroll.virtualItems; trackBy: trackByRows()">
                 <div [style.transform]="'translateY(' + item.start + 'px)'"
                      [style.height.px]="rows[item.index].size"
-                     class="item">
+                     class="item item--vertical">
                     {{rows[item.index].name}}
                 </div>
             </ng-container>
@@ -21,7 +21,7 @@
 
 
 <h2>Horizontal</h2>
-<div class="viewport viewport--horizontal" #horizontalViewportRef>
+<div class="viewport" #horizontalViewportRef>
     <ng-container with-virtual-scroll
                   [count]="rows.length"
                   [horizontal]="true"
@@ -44,7 +44,7 @@
 <h2>Grid</h2>
 
 
-<div class="viewport viewport--grid" #gridViewportRef>
+<div class="viewport" #gridViewportRef>
     <ng-container with-virtual-scroll
                   [count]="rows.length"
                   [estimateSize]="estimateSizeFn"
