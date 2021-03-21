@@ -25,7 +25,7 @@ Heavily inspired by [react-virtual](https://github.com/tannerlinsley/react-virtu
 - Using one viewport to render multiple columns with the same list. It can be very useful if you are building a table with two columns where first is a main column and second is table columns [Source](https://github.com/egorgrushin/ngx-with-virtual-scroll/tree/master/examples/src/app/multi-columns) | [Live](https://codesandbox.io/s/github/egorgrushin/ngx-with-virtual-scroll/tree/master/examples?initialpath=/multi-columns&file=/src/app/multi-columns/multi-columns.component.html)
 - Scrolling functions, custom scroll functions, smooth scrolling [Source](https://github.com/egorgrushin/ngx-with-virtual-scroll/tree/master/examples/src/app/scroll) | [Live](https://codesandbox.io/s/github/egorgrushin/ngx-with-virtual-scroll/tree/master/examples?initialpath=/scroll&file=/src/app/scroll/scroll.component.html)
 
-## Instalation
+## Installation
 
 ```bash
 npm install ngx-with-virtual-scroll@latest -S
