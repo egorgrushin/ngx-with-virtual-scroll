@@ -11,16 +11,11 @@ import { defaultEstimateSize } from '../constants';
 })
 export class BlocksComponent {
     rows = generateItems(100000, 'row');
-    columns = generateItems(100000, 'column');
 
     estimateSizeFn = defaultEstimateSize;
 
     trackByRows() {
         return (index: number, item: VirtualItem) => this.rows[item.index].id;
-    }
-
-    trackByColumns() {
-        return (index: number, item: VirtualItem) => this.columns[item.index].id;
     }
 
 }

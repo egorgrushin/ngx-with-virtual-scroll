@@ -18,7 +18,9 @@ Heavily inspired by [react-virtual](https://github.com/tannerlinsley/react-virtu
 
 - The most minimal use case [Source](https://github.com/egorgrushin/ngx-with-virtual-scroll/tree/master/examples/minimal) | [Live](https://codesandbox.io/s/github/egorgrushin/ngx-with-virtual-scroll/tree/master/examples?initialpath=/minimal)
 
-- Pre and post blocks with any nested level. It can be helpful if your viewport and container are not in direct inheritance [Source](https://github.com/egorgrushin/ngx-with-virtual-scroll/tree/master/examples/blocks) | [Live](https://codesandbox.io/s/github/egorgrushin/ngx-with-virtual-scroll/tree/master/examples?initialpath=/blocksl)
+- Pre and post blocks with any nested level. It can be helpful if your viewport and container are not in direct inheritance [Source](https://github.com/egorgrushin/ngx-with-virtual-scroll/tree/master/examples/blocks) | [Live](https://codesandbox.io/s/github/egorgrushin/ngx-with-virtual-scroll/tree/master/examples?initialpath=/blocks)
+
+- Using one viewport to render several independent virtual scrolls [Source](https://github.com/egorgrushin/ngx-with-virtual-scroll/tree/master/examples/one-viewport-several-scrolls) | [Live](https://codesandbox.io/s/github/egorgrushin/ngx-with-virtual-scroll/tree/master/examples?initialpath=/one-viewport-several-scrolls)
 
   
 

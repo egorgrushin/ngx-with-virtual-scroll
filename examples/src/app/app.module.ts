@@ -7,12 +7,14 @@ import { MinimalComponent } from './minimal/minimal.component';
 import { RouterModule } from '@angular/router';
 import { routes } from './routes';
 import { BlocksComponent } from './blocks/blocks.component';
+import { OneViewportSeveralScrollsComponent } from './one-viewport-several-scrolls/one-viewport-several-scrolls.component';
 
 @NgModule({
     declarations: [
         AppComponent,
         MinimalComponent,
         BlocksComponent,
+        OneViewportSeveralScrollsComponent,
     ],
     imports: [
         BrowserModule,
