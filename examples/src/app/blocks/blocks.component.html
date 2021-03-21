@@ -11,13 +11,12 @@
         <div>
             <div class="block block--inside"></div>
             <div [style.height.px]="scroll.totalSize" #containerRef class="container">
-                <ng-container *ngFor="let item of scroll.virtualItems; trackBy: trackByRows()">
-                    <div [style.transform]="'translateY(' + item.start + 'px)'"
-                         [style.height.px]="rows[item.index].size"
-                         class="item item--vertical">
-                        {{rows[item.index].name}}
-                    </div>
-                </ng-container>
+                <div *ngFor="let item of scroll.virtualItems; trackBy: trackByRows()"
+                     [style.transform]="'translateY(' + item.start + 'px)'"
+                     [style.height.px]="rows[item.index].size"
+                     class="item item--vertical">
+                    {{rows[item.index].name}}
+                </div>
             </div>
             <div class="block block--inside"></div>
         </div>

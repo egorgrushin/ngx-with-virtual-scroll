@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router';
 import { routes } from './routes';
 import { BlocksComponent } from './blocks/blocks.component';
 import { OneViewportSeveralScrollsComponent } from './one-viewport-several-scrolls/one-viewport-several-scrolls.component';
+import { MultiColumnsComponent } from './multi-column/multi-columns.component';
 
 @NgModule({
     declarations: [
@@ -15,6 +16,7 @@ import { OneViewportSeveralScrollsComponent } from './one-viewport-several-scrol
         MinimalComponent,
         BlocksComponent,
         OneViewportSeveralScrollsComponent,
+        MultiColumnsComponent,
     ],
     imports: [
         BrowserModule,

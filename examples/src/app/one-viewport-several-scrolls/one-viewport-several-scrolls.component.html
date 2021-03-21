@@ -9,13 +9,12 @@
                   [containerRef]="container1Ref"
                   #scroll1="with-virtual-scroll">
         <div [style.height.px]="scroll1.totalSize" #container1Ref class="container">
-            <ng-container *ngFor="let item of scroll1.virtualItems; trackBy: trackByRows1()">
-                <div [style.transform]="'translateY(' + item.start + 'px)'"
-                     [style.height.px]="rows1[item.index].size"
-                     class="item item--vertical">
-                    {{rows1[item.index].name}}
-                </div>
-            </ng-container>
+            <div *ngFor="let item of scroll1.virtualItems; trackBy: trackByRows1()"
+                 [style.transform]="'translateY(' + item.start + 'px)'"
+                 [style.height.px]="rows1[item.index].size"
+                 class="item item--vertical">
+                {{rows1[item.index].name}}
+            </div>
         </div>
     </ng-container>
     <h3>Second set of rows:</h3>
@@ -26,13 +25,12 @@
                   [containerRef]="container2Ref"
                   #scroll2="with-virtual-scroll">
         <div [style.height.px]="scroll2.totalSize" #container2Ref class="container">
-            <ng-container *ngFor="let item of scroll2.virtualItems; trackBy: trackByRows2()">
-                <div [style.transform]="'translateY(' + item.start + 'px)'"
-                     [style.height.px]="rows2[item.index].size"
-                     class="item item--vertical">
-                    {{rows2[item.index].name}}
-                </div>
-            </ng-container>
+            <div *ngFor="let item of scroll2.virtualItems; trackBy: trackByRows2()"
+                 [style.transform]="'translateY(' + item.start + 'px)'"
+                 [style.height.px]="rows2[item.index].size"
+                 class="item item--vertical">
+                {{rows2[item.index].name}}
+            </div>
         </div>
     </ng-container>
 </div>

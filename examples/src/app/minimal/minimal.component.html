@@ -8,13 +8,12 @@
                   [viewportRef]="verticalViewportRef"
                   #verticalScroll="with-virtual-scroll">
         <div [style.height.px]="verticalScroll.totalSize" class="container">
-            <ng-container *ngFor="let item of verticalScroll.virtualItems; trackBy: trackByRows()">
-                <div [style.transform]="'translateY(' + item.start + 'px)'"
-                     [style.height.px]="rows[item.index].size"
-                     class="item item--vertical">
-                    {{rows[item.index].name}}
-                </div>
-            </ng-container>
+            <div *ngFor="let item of verticalScroll.virtualItems; trackBy: trackByRows()"
+                 [style.transform]="'translateY(' + item.start + 'px)'"
+                 [style.height.px]="rows[item.index].size"
+                 class="item item--vertical">
+                {{rows[item.index].name}}
+            </div>
         </div>
     </ng-container>
 </div>
@@ -29,13 +28,12 @@
                   [viewportRef]="horizontalViewportRef"
                   #horizontalScroll="with-virtual-scroll">
         <div [style.width.px]="horizontalScroll.totalSize" class="container">
-            <ng-container *ngFor="let item of horizontalScroll.virtualItems; trackBy: trackByRows()">
-                <div [style.transform]="'translateX(' + item.start + 'px)'"
-                     [style.width.px]="rows[item.index].size"
-                     class="item item--horizontal">
-                    {{rows[item.index].name}}
-                </div>
-            </ng-container>
+            <div *ngFor="let item of horizontalScroll.virtualItems; trackBy: trackByRows()"
+                 [style.transform]="'translateX(' + item.start + 'px)'"
+                 [style.width.px]="rows[item.index].size"
+                 class="item item--horizontal">
+                {{rows[item.index].name}}
+            </div>
         </div>
     </ng-container>
 </div>
