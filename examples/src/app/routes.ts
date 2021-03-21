@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { MinimalComponent } from './minimal/minimal.component';
 import { BlocksComponent } from './blocks/blocks.component';
 import { OneViewportSeveralScrollsComponent } from './one-viewport-several-scrolls/one-viewport-several-scrolls.component';
-import { MultiColumnsComponent } from './multi-column/multi-columns.component';
+import { MultiColumnsComponent } from './multi-columns/multi-columns.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/minimal', pathMatch: 'full' },
