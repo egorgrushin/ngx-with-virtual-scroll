@@ -1,6 +1,6 @@
 {
     "name": "ngx-with-virtual-scroll",
-    "version": "0.0.1-alpha.17",
+    "version": "1.0.0",
     "scripts": {
         "build": "ng build",
         "test": "ng test",
