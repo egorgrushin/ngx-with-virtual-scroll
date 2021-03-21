@@ -1,0 +1,52 @@
+<h1>Scroll</h1>
+
+<div class="form">
+    <input type="number" #offsetInput class="form__input">
+    <button (click)="scrollToOffset([scroll1, scroll2], +offsetInput.value)">Scroll to offset!</button>
+</div>
+<div class="form">
+    <input type="number" #indexInput class="form__input">
+    <button (click)="scrollToIndex([scroll1, scroll2], +indexInput.value)">Scroll to index!</button>
+</div>
+
+<div class="wrapper">
+    <ng-container with-virtual-scroll
+                  [count]="rows.length"
+                  [viewportRef]="verticalViewportRef1"
+                  #scroll1="with-virtual-scroll">
+        <div>
+            <p>with default scroll function</p>
+            <div class="viewport" #verticalViewportRef1>
+                <div [style.height.px]="scroll1.totalSize" class="container">
+                    <div *ngFor="let item of scroll1.virtualItems; trackBy: trackByRows()"
+                         [style.transform]="'translateY(' + item.start + 'px)'"
+                         [measure-size-for]="item"
+                         class="item item--vertical">
+                        {{rows[item.index].name}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-container with-virtual-scroll
+                  [count]="rows.length"
+                  [viewportRef]="verticalViewportRef2"
+                  [scrollToFn]="scrollToFn"
+                  #scroll2="with-virtual-scroll">
+        <div>
+            <p>with custom scroll function</p>
+            <div class="viewport" #verticalViewportRef2>
+                <div [style.height.px]="scroll2.totalSize" class="container">
+                    <div *ngFor="let item of scroll2.virtualItems; trackBy: trackByRows()"
+                         [style.transform]="'translateY(' + item.start + 'px)'"
+                         [measure-size-for]="item"
+                         class="item item--vertical">
+                        {{rows[item.index].name}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+</div>

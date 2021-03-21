@@ -54,7 +54,7 @@ export class WithVirtualScrollDirective {
     /**
      * @Input() the reference to container element ref. This container should contain visible items,
      * but its height / width must be set using totalSize property.
-     * This input is optional if viewportRef contains only containerRef
+     * This input is optional if viewportRef contains only containerRef, otherwise it must be set.
      */
     @Input() containerRef?: HTMLElement;
     /**

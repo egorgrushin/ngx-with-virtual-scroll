@@ -1,0 +1,11 @@
+.block {
+    background: #ffbfca;
+    border: 1px solid black;
+    flex: 1 0 auto;
+    height: 200px;
+    width: 100%;
+
+    &--inside {
+        background: #b3263e;
+    }
+}
