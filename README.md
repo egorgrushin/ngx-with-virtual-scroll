@@ -12,8 +12,9 @@ Heavily inspired by [react-virtual](https://github.com/tannerlinsley/react-virtu
 - You can pass any scroll element to be scrolled, even if it's not ancestor of your container (see [examples](https://github.com/egorgrushin/ngx-with-virtual-scroll/tree/master/README.md#examples))
 - It can render both static, dynamic and different size elements
 - It provides scrollTo and scrollToIndex functions
+- You can override scrolling function with your own (see [examples](https://github.com/egorgrushin/ngx-with-virtual-scroll/tree/master/README.md#examples))
 - It allows you to override scrolling function that is using in previous pt.
-- It allows you to render one list to several containers (see examples)
+- It allows you to render one list to several containers (see [examples](https://github.com/egorgrushin/ngx-with-virtual-scroll/tree/master/README.md#examples))
 - It can be both horizontal and vertical
 
 ## Examples
