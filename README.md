@@ -84,12 +84,13 @@ To start using you need to:
    ```typescript
    import { VirtualItem } from 'ngx-with-virtual-scroll';
    
-   export class ListComponent {
-       rows = [...Array(count)].map((i, index) => ({
-     	  id: index,
-   	    name: `${label} ${index}`,
-       	size,
-   		}));
+   export class MinimalComponent {
+       rows = [...Array(100000)].map((i, index) => ({
+           id: index,
+           name: `row ${index}`,
+           size: 50,
+       }));
+   
        estimateSizeFn = () => 50;
    
        trackByRows() {
