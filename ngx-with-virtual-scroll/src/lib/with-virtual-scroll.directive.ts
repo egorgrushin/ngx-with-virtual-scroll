@@ -11,8 +11,17 @@ import {
     VirtualScrollToAlign,
     VirtualScrollToFn,
 } from './types';
-import { animationFrameScheduler, BehaviorSubject, fromEvent, Observable, Subject } from 'rxjs';
-import { auditTime, distinctUntilChanged, filter, map, startWith, switchMap, takeUntil } from 'rxjs/operators';
+import { animationFrameScheduler, asapScheduler, BehaviorSubject, fromEvent, Observable, Subject } from 'rxjs';
+import {
+    auditTime,
+    distinctUntilChanged,
+    filter,
+    map,
+    observeOn,
+    startWith,
+    switchMap,
+    takeUntil,
+} from 'rxjs/operators';
 import {
     buildDefaultScrollToFn,
     buildElementRectObserver$,
@@ -244,6 +253,7 @@ export class WithVirtualScrollDirective {
 
             this.virtualItems$.pipe(
                 distinctUntilChanged(),
+                observeOn(asapScheduler),
                 takeUntil(this.destroy$),
             ).subscribe((virtualItems) => this.ngZone.run(() => {
                 this.virtualItems = virtualItems;
@@ -252,6 +262,7 @@ export class WithVirtualScrollDirective {
 
             this.totalSize$.pipe(
                 distinctUntilChanged(),
+                observeOn(asapScheduler),
                 takeUntil(this.destroy$),
             ).subscribe((totalSize) => this.ngZone.run(() => {
                 this.totalSize = totalSize;
