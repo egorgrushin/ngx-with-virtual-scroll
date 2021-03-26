@@ -2,7 +2,7 @@
 
 <h2>Equal by content, but not hardcoded sizes. The most recommended way</h2>
 <ng-container with-virtual-scroll
-              [count]="rows.length"
+              [items]="rows"
               [viewportRef]="verticalViewportRef2"
               #scroll2="with-virtual-scroll">
     <div class="viewport" #verticalViewportRef2>
@@ -19,7 +19,7 @@
 
 <h2>Dynamic or unequal sizes</h2>
 <ng-container with-virtual-scroll
-              [count]="rows.length"
+              [items]="rows"
               [useFirstMeasuredSize]="false"
               [viewportRef]="verticalViewportRef1"
               #scroll1="with-virtual-scroll">

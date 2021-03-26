@@ -12,6 +12,7 @@
     },
     "homepage": "https://github.com/egorgrushin/ngx-with-virtual-scroll#readme",
     "devDependencies": {
+        "@angular/common": "^11.0.2",
         "@typescript-eslint/eslint-plugin": "^4.18.0",
         "@typescript-eslint/parser": "^4.18.0",
         "eslint": "^7.22.0",

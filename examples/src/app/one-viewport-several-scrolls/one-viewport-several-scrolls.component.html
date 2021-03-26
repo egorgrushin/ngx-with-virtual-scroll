@@ -3,7 +3,7 @@
 <div class="viewport" #viewportRef>
     <h3>First set of rows:</h3>
     <ng-container with-virtual-scroll
-                  [count]="rows1.length"
+                  [items]="rows1"
                   [estimateSize]="estimateSizeFn"
                   [viewportRef]="viewportRef"
                   [containerRef]="container1Ref"
@@ -19,7 +19,7 @@
     </ng-container>
     <h3>Second set of rows:</h3>
     <ng-container with-virtual-scroll
-                  [count]="rows2.length"
+                  [items]="rows2"
                   [estimateSize]="estimateSizeFn"
                   [viewportRef]="viewportRef"
                   [containerRef]="container2Ref"

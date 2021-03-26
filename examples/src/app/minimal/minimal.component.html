@@ -2,7 +2,7 @@
 
 <h2>Vertical</h2>
 <ng-container with-virtual-scroll
-              [count]="rows.length"
+              [items]="rows"
               [estimateSize]="estimateSizeFn"
               [viewportRef]="verticalViewportRef"
               #verticalScroll="with-virtual-scroll">
@@ -21,7 +21,7 @@
 
 <h2>Horizontal</h2>
 <ng-container with-virtual-scroll
-              [count]="rows.length"
+              [items]="rows"
               [horizontal]="true"
               [estimateSize]="estimateSizeFn"
               [viewportRef]="horizontalViewportRef"
@@ -43,12 +43,12 @@
 <h2>Grid</h2>
 
 <ng-container with-virtual-scroll
-              [count]="rows.length"
+              [items]="rows"
               [estimateSize]="estimateSizeFn"
               [viewportRef]="gridViewportRef"
               #rowScroll="with-virtual-scroll">
     <ng-container with-virtual-scroll
-                  [count]="columns.length"
+                  [items]="columns"
                   [horizontal]="true"
                   [estimateSize]="estimateSizeFn"
                   [viewportRef]="gridViewportRef"
