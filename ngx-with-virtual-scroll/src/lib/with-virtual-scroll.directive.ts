@@ -8,20 +8,12 @@ import {
     VirtualMeasuredCache,
     VirtualMeasureItemSizeFn,
     VirtualMeasurement,
+    VirtualMeasureRequest,
     VirtualScrollToAlign,
     VirtualScrollToFn,
 } from './types';
-import { animationFrameScheduler, asapScheduler, BehaviorSubject, fromEvent, Observable, Subject } from 'rxjs';
-import {
-    auditTime,
-    distinctUntilChanged,
-    filter,
-    map,
-    observeOn,
-    startWith,
-    switchMap,
-    takeUntil,
-} from 'rxjs/operators';
+import { animationFrameScheduler, BehaviorSubject, fromEvent, Observable, Subject } from 'rxjs';
+import { auditTime, distinctUntilChanged, filter, map, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 import {
     buildDefaultScrollToFn,
     buildElementRectObserver$,
@@ -35,6 +27,7 @@ import {
     buildVirtualItems,
     isBoundariesEqual,
 } from './utils';
+import memoizeOne from 'memoize-one';
 
 @Directive({
     selector: '[with-virtual-scroll]',
@@ -112,12 +105,22 @@ export class WithVirtualScrollDirective {
     private virtualItems$ = new BehaviorSubject<VirtualItem[]>([]);
     private measuredCache: VirtualMeasuredCache = {};
     private totalSize$ = new BehaviorSubject<number>(0);
+    private measureSizeRequest$ = new Subject<VirtualMeasureRequest>();
     private keys: VirtualKeys = buildKeys(this.horizontal);
     private measureSizeFactoryBound = this.measureSizeFactory.bind(this);
     private resolvedScrollToFn?: VirtualScrollToFn;
     private viewportRect?: DOMRect;
     private viewportSize: number = 0;
     private markedCacheDirty: boolean = true;
+    private buildKeys = memoizeOne(buildKeys);
+    private buildMeasurements = memoizeOne(buildMeasurements);
+    private buildFrame = memoizeOne(buildFrame);
+    private buildRange = memoizeOne(buildRange);
+    private buildDefaultScrollToFn = memoizeOne(buildDefaultScrollToFn);
+    private buildResolvedScrollToFn = memoizeOne(buildResolvedScrollToFn);
+    private buildMeasureItemSizeFactory = memoizeOne(buildMeasureItemSizeFactory);
+    private buildVirtualItems = memoizeOne(buildVirtualItems);
+    private measureSizeRequests: VirtualMeasureRequest[] = [];
 
     constructor(
         private ngZone: NgZone,
@@ -197,30 +200,30 @@ export class WithVirtualScrollDirective {
 
     private recalc() {
         if (!this.viewportRef || !this.viewportRect) return;
-        this.keys = buildKeys(this.horizontal);
+        this.keys = this.buildKeys(this.horizontal);
         // @ts-ignore
         this.viewportSize = this.viewportRect[this.keys.sizeKey];
-        this.measurements = buildMeasurements(
+        this.measurements = this.buildMeasurements(
             this.items?.length,
             this.measuredCache,
             this.useFirstMeasuredSize,
             this.estimateSize,
         );
         const totalSize = buildTotalSize(this.measurements);
-        const frame = buildFrame(this.viewportRect, this.keys, this.scrollOffset, totalSize, this.containerRef);
-        const range = buildRange(this.measurements, frame, this.bufferLength);
+        const frame = this.buildFrame(this.viewportRect, this.keys, this.scrollOffset, totalSize, this.containerRef);
+        const range = this.buildRange(this.measurements, frame, this.bufferLength);
         if (!isBoundariesEqual(this.range, range)) {
             this.range = range;
         }
-        const defaultScrollToFn = buildDefaultScrollToFn(this.viewportRef, this.keys);
-        this.resolvedScrollToFn = buildResolvedScrollToFn(this.viewportRef, defaultScrollToFn, this.scrollToFn);
+        const defaultScrollToFn = this.buildDefaultScrollToFn(this.viewportRef, this.keys);
+        this.resolvedScrollToFn = this.buildResolvedScrollToFn(this.viewportRef, defaultScrollToFn, this.scrollToFn);
 
-        const measureItemSizeFactory = buildMeasureItemSizeFactory(
+        const measureItemSizeFactory = this.buildMeasureItemSizeFactory(
             this.keys,
             defaultScrollToFn,
             this.measureSizeFactoryBound,
         );
-        const virtualItems = buildVirtualItems(this.range, this.measurements, measureItemSizeFactory);
+        const virtualItems = this.buildVirtualItems(this.range, this.measurements, measureItemSizeFactory);
         /**
          * this is entry point for possible change detection.
          * Since it is guarded with distinctUntilChanged it is safety to push the same values each time
@@ -230,7 +233,7 @@ export class WithVirtualScrollDirective {
     }
 
     private subscribeToStreams() {
-        this.ngZone.runOutsideAngular(() => {
+        this.ngZone.runOutsideAngular(() => Promise.resolve().then(() => {
             buildElementRectObserver$(this.viewportRef$).pipe(
                 takeUntil(this.destroy$),
             ).subscribe((viewportRect) => {
@@ -253,55 +256,64 @@ export class WithVirtualScrollDirective {
 
             this.virtualItems$.pipe(
                 distinctUntilChanged(),
-                observeOn(asapScheduler),
                 takeUntil(this.destroy$),
-            ).subscribe((virtualItems) => this.ngZone.run(() => {
+            ).subscribe((virtualItems) => {
                 this.virtualItems = virtualItems;
-                this.cdr.markForCheck();
-            }));
+                this.doChangeDetection();
+            });
 
             this.totalSize$.pipe(
                 distinctUntilChanged(),
-                observeOn(asapScheduler),
                 takeUntil(this.destroy$),
-            ).subscribe((totalSize) => this.ngZone.run(() => {
+            ).subscribe((totalSize) => {
                 this.totalSize = totalSize;
-                this.cdr.markForCheck();
-            }));
-        });
+                this.doChangeDetection();
+            });
+            this.measureSizeRequest$.pipe(
+                tap((request) => this.measureSizeRequests.push(request)),
+                auditTime(0, animationFrameScheduler),
+                tap(() => this.measureSize(this.measureSizeRequests)),
+                takeUntil(this.destroy$),
+            ).subscribe(() => this.measureSizeRequests = []);
+
+        }));
     }
 
-    measureSizeFactory(
-        defaultScrollToFn: VirtualScrollToFn,
-        keys: VirtualKeys,
-    ): VirtualMeasureItemSizeFn {
+    measureSize(requests: VirtualMeasureRequest[]) {
+        if (requests.length === 0) return;
+        if (this.useFirstMeasuredSize) {
+            const firstRequest = requests[0];
+            const measuredSizes = Object.values(this.measuredCache);
+            const firstMeasuredSize = measuredSizes[0];
+            const { item, el } = firstRequest;
+            this.recheckSizeAndRecalc(item, el, firstMeasuredSize);
+        } else {
+            requests.forEach((request) => this.recheckSizeAndRecalc(
+                request.item,
+                request.el,
+                request.item.size,
+            ));
+        }
+        this.recalc();
+    }
+
+    measureSizeFactory(): VirtualMeasureItemSizeFn {
         return (item: VirtualItem) => (el: HTMLElement) => {
             if (!el) return;
-            if (this.useFirstMeasuredSize) {
-                const measuredSizes = Object.values(this.measuredCache);
-                const firstMeasuredSize = measuredSizes[0];
-                if (this.markedCacheDirty || !firstMeasuredSize) {
-                    this.recheckSizeAndRecalc(item, keys, el, firstMeasuredSize);
-                    this.markedCacheDirty = false;
-                }
-                return;
-            }
-            this.recheckSizeAndRecalc(item, keys, el, item.size);
+            this.ngZone.runOutsideAngular(() => this.measureSizeRequest$.next({ el, item }));
         };
     }
 
     private recheckSizeAndRecalc(
         item: VirtualItem,
-        keys: VirtualKeys,
         el: HTMLElement,
         size?: number,
     ) {
         // @ts-ignore
-        const { [keys.sizeKey]: measuredSize } = el.getBoundingClientRect();
+        const { [this.keys.sizeKey]: measuredSize } = el.getBoundingClientRect();
         if (size !== measuredSize) {
             const old = this.useFirstMeasuredSize ? {} : this.measuredCache;
             this.measuredCache = { ...old, [item.index]: measuredSize };
-            this.recalc();
         }
     }
 
@@ -313,5 +325,11 @@ export class WithVirtualScrollDirective {
             }
         }
         return align;
+    }
+
+    private doChangeDetection() {
+        this.ngZone.runOutsideAngular(() => Promise.resolve().then(() => {
+            this.ngZone.run(() => this.cdr.markForCheck());
+        }));
     }
 }
