@@ -1,0 +1,34 @@
+<div>
+    <input type="text" #rowIndex>
+    <input type="text" #colIndex>
+    <button (click)="scrollTo(rowsScroll, +rowIndex.value)">scroll to!</button>
+</div>
+
+<div class="viewport" #viewportRef>
+    <ng-container with-virtual-scroll
+                  [count]="rows.length"
+                  [viewportRef]="viewportRef"
+                  #rowsScroll="with-virtual-scroll">
+        <ng-container
+            with-virtual-scroll
+            [count]="columns.length"
+            [horizontal]="true"
+            [viewportRef]="viewportRef"
+            #columnsScroll="with-virtual-scroll">
+            <div [style.height.px]="rowsScroll.totalSize"
+                 [style.width.px]="columnsScroll.totalSize"
+                 class="container">
+                <ng-container *ngFor="let row of rowsScroll.virtualItems; trackBy: trackByRows()">
+                    <ng-container *ngFor="let column of columnsScroll.virtualItems; trackBy: trackByColumns()">
+                        <div [style.transform]="'translate(' + column.start + 'px, ' + row.start + 'px)'"
+                             [style.height.px]="rows[row.index].height"
+                             [style.width.px]="rows[column.index].height"
+                             class="item">
+                            ({{row.index}}; {{column.index}})
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </div>
+        </ng-container>
+    </ng-container>
+</div>
