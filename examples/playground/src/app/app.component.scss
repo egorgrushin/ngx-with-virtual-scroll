@@ -1,7 +1,7 @@
 .viewport {
     border: 1px solid black;
     background: #CC6600;
-    height: 600px;
+    max-height: 600px;
     width: 600px;
     overflow: auto;
 }
@@ -17,6 +17,7 @@
     position: absolute;
     top: 0;
     left: 0;
+    width: 100%;
 }
 
 

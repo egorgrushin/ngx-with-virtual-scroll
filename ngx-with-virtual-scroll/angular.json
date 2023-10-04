@@ -1,0 +1,47 @@
+{
+    "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+    "version": 1,
+    "newProjectRoot": "projects",
+    "projects": {
+        "ngx-with-virtual-scroll": {
+            "projectType": "library",
+            "root": ".",
+            "sourceRoot": "./src",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-angular:ng-packagr",
+                    "options": {
+                        "tsConfig": "./tsconfig.json",
+                        "project": "./ng-package.json"
+                    },
+                    "configurations": {
+                        "production": {
+                            "tsConfig": "./tsconfig.prod.json"
+                        }
+                    }
+                },
+                "test": {
+                    "builder": "@angular-builders/jest:run",
+                    "options": {
+                        "configPath": "jest.config.js",
+                        "tsConfig": "tsconfig.spec.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "./tsconfig.json",
+                            "./tsconfig.spec.json"
+                        ],
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "defaultProject": "ngx-with-virtual-scroll"
+}
