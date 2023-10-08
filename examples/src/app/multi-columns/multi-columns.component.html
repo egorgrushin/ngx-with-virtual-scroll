@@ -1,0 +1,31 @@
+<h1>Multi columns</h1>
+
+<ng-container with-virtual-scroll
+              [count]="rows.length"
+              [estimateSize]="estimateSizeFn"
+              [viewportRef]="viewportRef"
+              #scroll="with-virtual-scroll">
+    <div class="columns" #viewportRef>
+        <div [style.height.px]="scroll.totalSize" class="column column--fixed">
+            <div *ngFor="let item of scroll.virtualItems; trackBy: trackByRows()"
+                 [style.transform]="'translateY(' + item.start + 'px)'"
+                 [style.height.px]="rows[item.index].size"
+                 class="row">
+                <div class="cell cell--fixed">
+                    {{rows[item.index].name}}
+                </div>
+            </div>
+        </div>
+        <div [style.height.px]="scroll.totalSize" class="column">
+            <div *ngFor="let item of scroll.virtualItems; trackBy: trackByRows()"
+                 [style.transform]="'translateY(' + item.start + 'px)'"
+                 [style.height.px]="rows[item.index].size"
+                 class="row">
+                <div *ngFor="let column of columns"
+                     class="cell">
+                    {{column.name}} {{rows[item.index].name}}
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-container>

@@ -1,0 +1,37 @@
+<h1>measure-size-for usage</h1>
+
+<h2>Equal by content, but not hardcoded sizes. The most recommended way</h2>
+<ng-container with-virtual-scroll
+              [count]="rows.length"
+              [viewportRef]="verticalViewportRef2"
+              #scroll2="with-virtual-scroll">
+    <div class="viewport" #verticalViewportRef2>
+        <div [style.height.px]="scroll2.totalSize" class="container">
+            <div *ngFor="let item of scroll2.virtualItems; trackBy: trackByRows()"
+                 [style.transform]="'translateY(' + item.start + 'px)'"
+                 [measure-size-for]="item"
+                 class="item item--vertical">
+                {{rows[item.index].name}}
+            </div>
+        </div>
+    </div>
+</ng-container>
+
+<h2>Dynamic or unequal sizes</h2>
+<ng-container with-virtual-scroll
+              [count]="rows.length"
+              [useFirstMeasuredSize]="false"
+              [viewportRef]="verticalViewportRef1"
+              #scroll1="with-virtual-scroll">
+    <div class="viewport" #verticalViewportRef1>
+        <div [style.height.px]="scroll1.totalSize" class="container">
+            <div *ngFor="let item of scroll1.virtualItems; trackBy: trackByRows()"
+                 [style.transform]="'translateY(' + item.start + 'px)'"
+                 [style.height.px]="rows[item.index].size"
+                 [measure-size-for]="item"
+                 class="item item--vertical">
+                {{rows[item.index].name}}
+            </div>
+        </div>
+    </div>
+</ng-container>

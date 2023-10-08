@@ -1,0 +1,13 @@
+.form {
+    display: inline-flex;
+    margin-bottom: 8px;
+    padding: 8px;
+
+    &__input {
+        margin-right: 8px;
+    }
+}
+
+.wrapper {
+    display: flex;
+}
