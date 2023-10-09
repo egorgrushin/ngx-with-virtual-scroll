@@ -16,6 +16,7 @@ Heavily inspired by [react-virtual](https://github.com/tannerlinsley/react-virtu
 - It allows you to override scrolling function that is using in previous pt.
 - It allows you to render one list to several containers (see [examples](https://github.com/egorgrushin/ngx-with-virtual-scroll/tree/master/README.md#examples))
 - It can be both horizontal and vertical
+- Scrolling can be throttled and/or debounced
 
 ## Examples
 
@@ -151,6 +152,16 @@ export declare class WithVirtualScrollDirective {
      * Default scrolling behavior: setting scrollTop / scrollLeft
      */
     scrollToFn?: VirtualCustomScrollToFn;
+      /**
+     * @Input() debounce scrolling in ms. Debouncing goes first before throttling
+     * Default: 0
+     */
+    debounceTime: number;
+    /**
+     * @Input() throttle scrolling in ms. Debouncing goes first before throttling
+     * Default: 0
+     */
+    throttleTime: number;
     /**
      * this property must be used as height / width setter for containerRef
      */

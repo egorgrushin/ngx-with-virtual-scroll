@@ -11,8 +11,8 @@ import {
     VirtualScrollToAlign,
     VirtualScrollToFn,
 } from './types';
-import { asapScheduler, BehaviorSubject, fromEvent, Observable, Subject } from 'rxjs';
-import { distinctUntilChanged, filter, map, observeOn, switchMap, takeUntil } from 'rxjs/operators';
+import { asapScheduler, BehaviorSubject, EMPTY, fromEvent, Observable, Subject, timer } from 'rxjs';
+import { debounce, distinctUntilChanged, filter, map, observeOn, switchMap, takeUntil, throttle } from 'rxjs/operators';
 import {
     buildDefaultScrollToFn,
     buildElementRectObserver$,
@@ -74,6 +74,16 @@ export class WithVirtualScrollDirective {
      * Default scrolling behavior: setting scrollTop / scrollLeft
      */
     @Input() scrollToFn?: VirtualCustomScrollToFn;
+    /**
+     * @Input() debounce scrolling in ms. Debouncing goes first before throttling
+     * Default: 0
+     */
+    @Input() debounceTime: number = 0;
+    /**
+     * @Input() throttle scrolling in ms. Debouncing goes first before throttling
+     * Default: 0
+     */
+    @Input() throttleTime: number = 0;
     /**
      * this property must be used as height / width setter for containerRef
      */
@@ -226,6 +236,11 @@ export class WithVirtualScrollDirective {
 
             this.viewportRef$.pipe(
                 switchMap((viewportRef) => fromEvent(viewportRef, 'scroll', { passive: true, capture: false }).pipe(
+                    debounce(() => {
+                        if (!this.debounceTime) return EMPTY;
+                        return timer(this.debounceTime);
+                    }),
+                    throttle(() => timer(this.throttleTime ?? 0), { leading: true, trailing: true }),
                     // @ts-ignore
                     map(() => viewportRef[this.keys.scrollKey]),
                 )),
