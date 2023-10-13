@@ -45,7 +45,7 @@ To start using you need to:
 
    ```html
    <ng-container with-virtual-scroll
-                 [count]="rows.length"
+                 [items]="rows"
                  [estimateSize]="estimateSizeFn"
                  [viewportRef]="verticalViewportRef"
                  #verticalScroll="with-virtual-scroll">
@@ -111,9 +111,9 @@ To start using you need to:
 ```typescript
 export declare class WithVirtualScrollDirective {
     /**
-     * @Input() the total count of items to render
+     * @Input() items ref
      */
-    count: number;
+    items?: unknown[];
     /**
      * @Input() the reference to viewport element ref. Its height / width will be used as items limiter
      */
@@ -152,16 +152,6 @@ export declare class WithVirtualScrollDirective {
      * Default scrolling behavior: setting scrollTop / scrollLeft
      */
     scrollToFn?: VirtualCustomScrollToFn;
-      /**
-     * @Input() debounce scrolling in ms. Debouncing goes first before throttling
-     * Default: 0
-     */
-    debounceTime: number;
-    /**
-     * @Input() throttle scrolling in ms. Debouncing goes first before throttling
-     * Default: 0
-     */
-    throttleTime: number;
     /**
      * this property must be used as height / width setter for containerRef
      */
@@ -182,18 +172,25 @@ export declare class WithVirtualScrollDirective {
      * current range in indexes
      */
     range: VirtualBoundaries;
+
     /**
-     * this allows you to scroll to offset. There are align option:
+     * this allows you to scroll to offset.
+     * @param [offset] to scroll
+     * @param [align]:
      *  start - offset will be at start of visible viewport area
      *  end - offset will be at end of visible viewport area
      *  center - offset will be at center of visible viewport area
      *  auto - it will try to find closer align for offset.
      *  It will be end if current scroll position is more then offset + viewport size,
      *  otherwise it will be start
+     *
      */
     scrollToOffset(offset: number, align?: VirtualScrollToAlign): void;
+
     /**
-     * this allows you to scroll to specified index. There are align option:
+     * this allows you to scroll to specified index.
+     * @param [index] to scroll
+     * @param [align]:
      *  start - top of the item will be at the top of visible viewport area
      *  end - bottom of the item will be at the top of visible viewport area
      *  center - center of the item will be at the top of visible viewport area

@@ -2,7 +2,7 @@
 
 <div class="viewport" #viewportRef>
     <ng-container with-virtual-scroll
-                  [count]="rows.length"
+                  [items]="rows"
                   [estimateSize]="estimateSizeFn"
                   [viewportRef]="viewportRef"
                   [containerRef]="containerRef"

@@ -11,8 +11,8 @@ import {
     VirtualScrollToAlign,
     VirtualScrollToFn,
 } from './types';
-import { asapScheduler, BehaviorSubject, EMPTY, fromEvent, Observable, Subject, timer } from 'rxjs';
-import { debounce, distinctUntilChanged, filter, map, observeOn, switchMap, takeUntil, throttle } from 'rxjs/operators';
+import { animationFrameScheduler, BehaviorSubject, fromEvent, Observable, Subject } from 'rxjs';
+import { auditTime, distinctUntilChanged, filter, map, startWith, switchMap, takeUntil } from 'rxjs/operators';
 import {
     buildDefaultScrollToFn,
     buildElementRectObserver$,
@@ -33,9 +33,9 @@ import {
 })
 export class WithVirtualScrollDirective {
     /**
-     * @Input() the total count of items to render
+     * @Input() items ref
      */
-    @Input() count: number = 0;
+    @Input() items?: unknown[];
     /**
      * @Input() the reference to viewport element ref. Its height / width will be used as items limiter
      */
@@ -75,16 +75,6 @@ export class WithVirtualScrollDirective {
      */
     @Input() scrollToFn?: VirtualCustomScrollToFn;
     /**
-     * @Input() debounce scrolling in ms. Debouncing goes first before throttling
-     * Default: 0
-     */
-    @Input() debounceTime: number = 0;
-    /**
-     * @Input() throttle scrolling in ms. Debouncing goes first before throttling
-     * Default: 0
-     */
-    @Input() throttleTime: number = 0;
-    /**
      * this property must be used as height / width setter for containerRef
      */
     totalSize: number = 0;
@@ -118,6 +108,7 @@ export class WithVirtualScrollDirective {
     private resolvedScrollToFn?: VirtualScrollToFn;
     private viewportRect?: DOMRect;
     private viewportSize: number = 0;
+    private markedCacheDirty: boolean = true;
 
     constructor(
         private ngZone: NgZone,
@@ -128,8 +119,8 @@ export class WithVirtualScrollDirective {
         if ('viewportRef' in changes) {
             this.viewportRefSubj$.next(this.viewportRef);
         }
-        if ('count' in changes || 'estimateSize' in changes) {
-            this.measuredCache = {};
+        if ('items' in changes || 'estimateSize' in changes) {
+            this.markedCacheDirty = true;
         }
         this.recalc();
     }
@@ -144,7 +135,9 @@ export class WithVirtualScrollDirective {
     }
 
     /**
-     * this allows you to scroll to offset. There are align option:
+     * this allows you to scroll to offset.
+     * @param [offset] to scroll
+     * @param [align]:
      *  start - offset will be at start of visible viewport area
      *  end - offset will be at end of visible viewport area
      *  center - offset will be at center of visible viewport area
@@ -167,7 +160,9 @@ export class WithVirtualScrollDirective {
     }
 
     /**
-     * this allows you to scroll to specified index. There are align option:
+     * this allows you to scroll to specified index.
+     * @param [index] to scroll
+     * @param [align]:
      *  start - top of the item will be at the top of visible viewport area
      *  end - bottom of the item will be at the top of visible viewport area
      *  center - center of the item will be at the top of visible viewport area
@@ -176,7 +171,7 @@ export class WithVirtualScrollDirective {
      *  otherwise it will be start
      */
     scrollToIndex(index: number, align = VirtualScrollToAlign.Start) {
-        const mappedIndex = Math.max(0, Math.min(index, this.count - 1));
+        const mappedIndex = Math.max(0, Math.min(index, (this.items?.length ?? 0) - 1));
         const measurement = this.measurements[mappedIndex];
         if (!measurement) return;
 
@@ -197,7 +192,7 @@ export class WithVirtualScrollDirective {
         // @ts-ignore
         this.viewportSize = this.viewportRect[this.keys.sizeKey];
         this.measurements = buildMeasurements(
-            this.count,
+            this.items?.length,
             this.measuredCache,
             this.useFirstMeasuredSize,
             this.estimateSize,
@@ -236,11 +231,8 @@ export class WithVirtualScrollDirective {
 
             this.viewportRef$.pipe(
                 switchMap((viewportRef) => fromEvent(viewportRef, 'scroll', { passive: true, capture: false }).pipe(
-                    debounce(() => {
-                        if (!this.debounceTime) return EMPTY;
-                        return timer(this.debounceTime);
-                    }),
-                    throttle(() => timer(this.throttleTime ?? 0), { leading: true, trailing: true }),
+                    startWith(undefined),
+                    auditTime(0, animationFrameScheduler),
                     // @ts-ignore
                     map(() => viewportRef[this.keys.scrollKey]),
                 )),
@@ -261,7 +253,6 @@ export class WithVirtualScrollDirective {
             this.totalSize$.pipe(
                 distinctUntilChanged(),
                 takeUntil(this.destroy$),
-                observeOn(asapScheduler),
             ).subscribe((totalSize) => this.ngZone.run(() => {
                 this.totalSize = totalSize;
                 this.cdr.markForCheck();
@@ -275,18 +266,32 @@ export class WithVirtualScrollDirective {
     ): VirtualMeasureItemSizeFn {
         return (item: VirtualItem) => (el: HTMLElement) => {
             if (!el) return;
-            // @ts-ignore
-            const { [keys.sizeKey]: measuredSize } = el.getBoundingClientRect();
-            if (measuredSize !== item.size) {
-                if (item.start < this.scrollOffset) {
-                    defaultScrollToFn(this.scrollOffset + (measuredSize - item.size));
+            if (this.useFirstMeasuredSize) {
+                const measuredSizes = Object.values(this.measuredCache);
+                const firstMeasuredSize = measuredSizes[0];
+                if (this.markedCacheDirty || !firstMeasuredSize) {
+                    this.recheckSizeAndRecalc(item, keys, el, firstMeasuredSize);
+                    this.markedCacheDirty = false;
                 }
-                const old = this.measuredCache;
-                if (this.useFirstMeasuredSize && Object.keys(old).length) return;
-                this.measuredCache = { ...old, [item.index]: measuredSize };
-                this.recalc();
+                return;
             }
+            this.recheckSizeAndRecalc(item, keys, el, item.size);
         };
+    }
+
+    private recheckSizeAndRecalc(
+        item: VirtualItem,
+        keys: VirtualKeys,
+        el: HTMLElement,
+        size?: number,
+    ) {
+        // @ts-ignore
+        const { [keys.sizeKey]: measuredSize } = el.getBoundingClientRect();
+        if (size !== measuredSize) {
+            const old = this.useFirstMeasuredSize ? {} : this.measuredCache;
+            this.measuredCache = { ...old, [item.index]: measuredSize };
+            this.recalc();
+        }
     }
 
     private normalizeAlign(end: number, align: VirtualScrollToAlign): VirtualScrollToAlign {

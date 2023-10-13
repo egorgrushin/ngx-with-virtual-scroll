@@ -14,7 +14,7 @@ import { defaultEstimateSizeFn } from './constants';
 import memoizeOne from 'memoize-one';
 import observeRect from '@reach/observe-rect';
 import { startWith, switchMap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 export const buildKeys = memoizeOne((horizontal: boolean): VirtualKeys => ({
     sizeKey: horizontal ? 'width' : 'height',
@@ -160,13 +160,16 @@ export const buildResolvedScrollToFn = memoizeOne((
 });
 
 export const buildElementRectObserver$ = (
-    elementRef$: Observable<HTMLElement>,
-): Observable<DOMRect> => elementRef$.pipe(
-    switchMap((elementRef) => new Observable<DOMRect>((observer) => {
-        const rectObserver = observeRect(elementRef, (rect) => observer.next(rect));
-        rectObserver.observe();
-        return () => rectObserver.unobserve();
-    }).pipe(
-        startWith(elementRef.getBoundingClientRect()),
-    )),
+    elementRef$: Observable<HTMLElement | undefined>,
+): Observable<DOMRect | undefined> => elementRef$.pipe(
+    switchMap((elementRef) => {
+        if (!elementRef) return of(undefined);
+        return new Observable<DOMRect>((observer) => {
+            const rectObserver = observeRect(elementRef, (rect) => observer.next(rect));
+            rectObserver.observe();
+            return () => rectObserver.unobserve();
+        }).pipe(
+            startWith(elementRef.getBoundingClientRect()),
+        );
+    }),
 );
