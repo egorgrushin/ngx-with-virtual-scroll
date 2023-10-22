@@ -48,6 +48,11 @@ export interface VirtualKeys {
 
 export type VirtualMeasuredCache = Record<string, number>;
 
+export interface VirtualMeasureRequest {
+    el: HTMLElement;
+    item: VirtualItem
+}
+
 export enum VirtualScrollToAlign {
     Auto = 'auto',
     Start = 'start',
